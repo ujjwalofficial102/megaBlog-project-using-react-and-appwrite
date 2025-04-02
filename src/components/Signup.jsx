@@ -1,26 +1,24 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import authService from "../appwrite/auth";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { login } from "../store/authSlice";
-import { Button, Input, Logo } from "./index";
+import { Button, Input, Logo } from "./index.js";
+import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 
-export default function Signup() {
-  const [error, setError] = useState("");
+function Signup() {
   const navigate = useNavigate();
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
 
   const create = async (data) => {
     setError("");
     try {
-      const session = await authService.createAccount(data);
-      if (session) {
+      const userData = await authService.createAccount(data);
+      if (userData) {
         const userData = await authService.getCurrentUser();
-        if (userData) {
-          await dispatch(login(userData));
-        }
+        if (userData) dispatch(login(userData));
         navigate("/");
       }
     } catch (error) {
@@ -75,7 +73,7 @@ export default function Signup() {
               })}
             />
             <Input
-              label="password: "
+              label="Password: "
               type="password"
               placeholder="Enter your password"
               {...register("password", {
@@ -91,3 +89,5 @@ export default function Signup() {
     </div>
   );
 }
+
+export default Signup;
